@@ -1,58 +1,38 @@
 package model;
 
-
-import service.Answers;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Pet {
-    private String nome;
-    private String sobrenome;
-    private String idade;
-    private String peso;
-    private String raca;
-    PetAddress petAddress;
-    PetGender petGender;
-    PetType petType;
-    public static final String NAO_INFORMADO = "Não Informado";
+    public String nome;
+    public String sobrenome;
+    public String idade;
+    public String peso;
+    public String raca;
+    PetType type;
+    PetGender gender;
+    public PetAddress petAddress = new PetAddress();
+
+    static String NAO_INFORMADO = "Não Informado";
 
     public String getNome() {
-
         return nome;
     }
 
     public void setNome(String nome) {
-        if (nome == null || nome.trim().isEmpty() || nome.equalsIgnoreCase(NAO_INFORMADO)) {
-            this.nome = NAO_INFORMADO;
-            return;
-        }
-        nome = nome.concat(" ");
         this.nome = nome;
     }
 
-
     public String getSobrenome() {
-
         return sobrenome;
     }
 
     public void setSobrenome(String sobrenome) {
-        if (sobrenome == null || sobrenome.trim().isEmpty() || sobrenome.equalsIgnoreCase(NAO_INFORMADO)) {
-            this.sobrenome = NAO_INFORMADO;
-            return;
-        }
         this.sobrenome = sobrenome;
-    }
-
-
-    public String getNome_completo() {
-        String nome_completo = nome + sobrenome;
-        nome_completo = nome_completo.trim();
-        String regex = "[a-zA-Z ]+";
-        if (!nome_completo.matches(regex)) {
-            System.out.println("O Nome não deve conter Números ou Carácteres Especiais, Tente Novamente");
-            Answers answers = new Answers();
-            answers.name();
-        }
-        return nome_completo;
     }
 
     public String getIdade() {
@@ -60,9 +40,8 @@ public class Pet {
     }
 
     public void setIdade(String idade) {
-        if (idade == null || idade.trim().isEmpty() || idade.equalsIgnoreCase(NAO_INFORMADO)) {
-            this.idade = NAO_INFORMADO;
-            return;
+        if (idade.isBlank()) {
+            idade = NAO_INFORMADO;
         }
         this.idade = idade;
     }
@@ -72,9 +51,8 @@ public class Pet {
     }
 
     public void setPeso(String peso) {
-        if (peso == null || peso.trim().isEmpty() || peso.equalsIgnoreCase(NAO_INFORMADO)) {
-            this.peso = NAO_INFORMADO;
-            return;
+        if (peso.isBlank()) {
+            peso = NAO_INFORMADO;
         }
         this.peso = peso;
     }
@@ -84,10 +62,81 @@ public class Pet {
     }
 
     public void setRaca(String raca) {
-        if (raca == null || raca.trim().isEmpty() || raca.equalsIgnoreCase(NAO_INFORMADO)) {
-            this.raca = NAO_INFORMADO;
-            return;
+        if (raca.isBlank()) {
+            raca = NAO_INFORMADO;
         }
         this.raca = raca;
+    }
+
+    public PetType getType() {
+        return type;
+    }
+
+    public void setType(PetType type) {
+        this.type = type;
+    }
+
+    public PetGender getGender() {
+        return gender;
+    }
+
+    public void setGender(PetGender gender) {
+        this.gender = gender;
+    }
+
+    public void setTypePet(int opcao) {
+        if (opcao == 1) {
+            setType(PetType.CACHORRO);
+        } if(opcao == 2) {
+            setType(PetType.GATO);
+        }
+    }
+
+    public void setGenderPet(int opcao) {
+        if (opcao == 1) {
+            setGender(PetGender.MACHO);
+        } if(opcao == 2) {
+            setGender(PetGender.FEMEA);
+        }
+    }
+
+
+    public PetAddress getPetAddress() {
+        return petAddress;
+    }
+
+    public void setPetAddress(PetAddress petAddress) {
+        this.petAddress = petAddress;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "1- " + nome + " " + sobrenome + '\n' +
+                "2- " + type + '\n' +
+                "3- " + gender + '\n' +
+                "4- " + petAddress + '\n' +
+                "5- " + idade + '\n' +
+                "6- " + peso + '\n' +
+                "7- " + raca + '\n';
+    }
+
+    public void savePet() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
+        String dataHoraFormatada = now.format(formatter);
+        System.out.println(nome);
+        System.out.println(this);
+        String nomeCompletoPet = this.nome.toUpperCase() + sobrenome.toUpperCase();
+        String nomeArquivo = dataHoraFormatada + "-" + nomeCompletoPet + ".TXT";
+        File filePet = new File(nomeArquivo);
+        try (FileWriter fw = new FileWriter(filePet);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+            filePet.createNewFile();
+            bw.write(String.valueOf(this));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

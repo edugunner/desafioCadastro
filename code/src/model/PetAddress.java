@@ -1,12 +1,11 @@
 package model;
 
-import service.Answers;
 
 public class PetAddress {
     private String numHouse;
     private String city;
     private String street;
-    private String address;
+    static String NAO_INFORMADO = "Não Informado";
 
 
     public String getNumHouse() {
@@ -14,21 +13,21 @@ public class PetAddress {
     }
 
     public void setNumHouse(String numHouse) {
-        if (!numHouse.matches("[\\d]+")){
-            System.out.println("Endereço inválido. Tente novamente");
-            Answers answers = new Answers();
-            answers.address();
-            return;
+        if (numHouse.isBlank()) {
+            numHouse = NAO_INFORMADO;
         }
         this.numHouse = numHouse;
     }
 
     public String getCity() {
+
         return city;
     }
 
     public void setCity(String city) {
-        city = city.concat(" ");
+        if (city.isBlank()) {
+            city = NAO_INFORMADO;
+        }
         this.city = city;
     }
 
@@ -37,16 +36,15 @@ public class PetAddress {
     }
 
     public void setStreet(String street) {
-        street = street.concat(" ");
+        if (street.isBlank()) {
+            street = NAO_INFORMADO;
+        }
         this.street = street;
     }
 
-    public String getAddress() {
-        return getStreet() + getCity() + getNumHouse();
+    @Override
+    public String toString() {
+        return
+                "Rua " + street + ", " + numHouse + ", "+ city;
     }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
 }

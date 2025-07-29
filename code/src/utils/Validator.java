@@ -1,140 +1,135 @@
 package utils;
 
+
 import model.Pet;
 import model.PetAddress;
-import model.PetGender;
-import model.PetType;
-import service.Answers;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class Validator {
     Pet pet = new Pet();
+    Scanner sc = new Scanner(System.in);
     PetAddress petAddress = new PetAddress();
 
-
-    public void validaName(String nome, String sobrenome) {
+    public String validaNome() {
         String regex = "[(a-zA-Z\\s)]+";
-        if (sobrenome.isBlank() || nome.isBlank()) {
-            throw new IllegalArgumentException("Digite o nome completo do Pet");
+        Scanner sc = new Scanner(System.in);
+        String nome = sc.nextLine();
 
+        if (nome.isBlank()) {
+            System.err.println("O pet precisa ter um nome e um sobrenome. Tente novamente");
         }
-        if (!nome.matches(regex) || !sobrenome.matches(regex)) {
-            System.out.println("O Nome não deve conter Números ou Carácteres Especiais, Tente Novamente");
-            Answers answers = new Answers();
-            answers.name();
-        }
-        String nome_completo = nome + sobrenome;
-        nome_completo = nome_completo.trim();
+
+        nome = nome.trim();
         regex = "[a-zA-Z ]+";
-        if (!nome_completo.matches(regex)) {
+        if (!nome.matches(regex)) {
             System.out.println("O Nome não deve conter Números ou Carácteres Especiais, Tente Novamente");
-            Answers answers = new Answers();
-            answers.name();
+
         } else {
-            pet.setNome(nome);
-            pet.setSobrenome(sobrenome);
+            return nome;
+        }
+        return nome;
+    }
+
+
+    public int lerUmDois() {
+        try {
+            System.out.print("Digite um número: ");
+            int numValido = sc.nextInt();
+            if (numValido == 1 || numValido == 2) {
+                sc.nextLine();
+                return numValido;
+            } else {
+                System.out.println("Entrada inválida! Digite um número valido.");
+                return lerUmDois();
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("Entrada inválida! Digite um número valido.");
+            sc.nextLine();
+            return lerUmDois();
         }
     }
 
-    public void validaType(String petType) {
-        if (petType.equalsIgnoreCase("Cachorro")) {
-            petType = String.valueOf(PetType.CACHORRO);
-            System.out.println(petType);
-        } else if (petType.equalsIgnoreCase("Gato")) {
-            petType = String.valueOf(PetType.GATO);
-            System.out.println(petType);
 
-        } else {
-            System.out.println("Opção inválida. Digite \"Gato\" ou \"Cachorro\"");
-            Answers answers = new Answers();
-            answers.type();
+    public PetAddress validaAddress() {
+        String numHouse;
+        while (true) {
+            System.out.println("Número da casa:");
+            numHouse = sc.nextLine();
+            if (numHouse.matches("\\d+")) {
+                break;
+            } else {
+                System.out.println("Digite apenas números. Tente novamente.");
+            }
         }
+
+        System.out.println("Cidade:");
+        String city = sc.nextLine();
+
+        System.out.println("Rua:");
+        String street = sc.nextLine();
+
+        petAddress.setNumHouse(numHouse);
+        petAddress.setCity(city);
+        petAddress.setStreet(street);
+        pet.setPetAddress(petAddress); // Certifique-se de que o objeto 'pet' esteja acessível
+        return petAddress;
     }
 
-    public void validaGender(String gender) {
-        if (gender.equalsIgnoreCase("Macho")) {
-            String petGender = String.valueOf(PetGender.MACHO);
-            System.out.println(petGender);
-        } else if (gender.equalsIgnoreCase("Femea")) {
-            String petGender = String.valueOf(PetGender.FEMEA);
-            System.out.println(petGender);
-        } else {
-            System.out.println("Opção inválida, tente novamente");
-            Answers answers = new Answers();
-            answers.gender();
+    public String validaIdade() {
+        String idade = sc.next();
+        double parseDouble;
+        try {
+            if (!idade.matches("^[0-9.,\\s]+$")) {
+                System.out.println("Idade Inválida. Tente Novamente");
+                validaIdade();
+            }
+            if (!idade.matches(",")) {
+                idade = idade.replace(',', '.');
+                parseDouble = Double.parseDouble(idade);
+            } else {
+                parseDouble = Double.parseDouble(idade);
+            }
+            if (parseDouble > 20.0) {
+                System.err.println("Idade Inválida. Tente Novamente");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Erro. Tente novamente" + e.getMessage());
         }
+        return idade;
     }
 
-    public void validaAddress(String numHouse, String city, String street) {
-        if (!numHouse.matches("[\\d]+")) {
-            System.out.println("Endereço inválido. Tente novamente");
-            Answers answers = new Answers();
-            answers.address();
-        } else {
-            petAddress.setNumHouse(numHouse);
-            petAddress.setCity(city);
-            petAddress.setStreet(street);
-            System.out.println(petAddress.getAddress());
-        }
-    }
-
-    public void validaIdade(String idade) {
-        if (!idade.matches("^[0-9.,]+$")) {
-            System.out.println("Idade Inválida. Tente Novamente");
-            Answers answers = new Answers();
-            answers.age();
-        }
-        if (!idade.matches(",")) {
-            idade = idade.replace(',', '.');
-            pet.setIdade(idade);
-            System.out.println(pet.getIdade());
-        } else {
-            pet.setIdade(idade);
-            System.out.println(pet.getIdade());
-        }
-        double parseDouble = Double.parseDouble(idade);
-        if (parseDouble > 20) {
-            throw new IllegalArgumentException("Idade superior a vinte");
-        }
-    }
-
-    public void validaPeso(String peso) {
-        if (!peso.matches("^[0-9.,]+$")) {
+    public String validaPeso() {
+        String peso = sc.next();
+        double parseDouble;
+        if (!peso.matches("^[0-9.,\\s]+$")) {
             System.out.println("Peso Inválido. Tente Novamente");
-            Answers answers = new Answers();
-            answers.age();
+            validaPeso();
         }
         if (!peso.matches(",")) {
             peso = peso.replace(',', '.');
-            pet.setPeso(peso);
-            System.out.println(pet.getPeso());
-        } else {
-            pet.setPeso(peso);
-            System.out.println(pet.getPeso());
         }
-        double parsePeso = Double.parseDouble(peso);
-        if (parsePeso > 60.00 || parsePeso < 0.5) {
+        if (peso.matches("\\s")) {
+            return peso;
+        } else {
+            parseDouble = Double.parseDouble(peso);
+        }
+        if (parseDouble > 60 || parseDouble < 0.5) {
             throw new IllegalArgumentException("Peso inválido");
         }
+        return peso;
     }
 
-    public void validaRaca(String raca) {
-        String regex = "[(a-zA-Z\\s)]+";
-        if (!raca.matches(regex)) {
-            System.out.println("Raça não pode conter números ou caracteres especiais");
-            Answers answers = new Answers();
-            answers.race();
-        }
-        raca = raca.trim();
-        regex = "[a-zA-Z ]+";
-        if (!raca.matches(regex)) {
-            System.out.println("Raça não pode conter números ou caracteres especiais");
-            Answers answers = new Answers();
-            answers.race();
+    public String validaRaca() {
+        String raca = sc.next();
+        if (!raca.matches("[(a-zA-Z\\s)]+")) {
+            System.out.println("Raça inválida. Digite apenas letras.");
+            validaRaca();
         } else {
-            pet.setRaca(raca);
-            System.out.println(pet.getRaca());
-
+            return raca;
         }
+        return raca;
     }
 }
