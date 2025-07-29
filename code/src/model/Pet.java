@@ -87,7 +87,8 @@ public class Pet {
     public void setTypePet(int opcao) {
         if (opcao == 1) {
             setType(PetType.CACHORRO);
-        } if(opcao == 2) {
+        }
+        if (opcao == 2) {
             setType(PetType.GATO);
         }
     }
@@ -95,7 +96,8 @@ public class Pet {
     public void setGenderPet(int opcao) {
         if (opcao == 1) {
             setGender(PetGender.MACHO);
-        } if(opcao == 2) {
+        }
+        if (opcao == 2) {
             setGender(PetGender.FEMEA);
         }
     }
@@ -113,29 +115,53 @@ public class Pet {
     public String toString() {
         return
                 "1- " + nome + " " + sobrenome + '\n' +
-                "2- " + type + '\n' +
-                "3- " + gender + '\n' +
-                "4- " + petAddress + '\n' +
-                "5- " + idade + '\n' +
-                "6- " + peso + '\n' +
-                "7- " + raca + '\n';
+                        "2- " + type + '\n' +
+                        "3- " + gender + '\n' +
+                        "4- " + petAddress + '\n' +
+                        "5- " + idade + '\n' +
+                        "6- " + peso + '\n' +
+                        "7- " + raca + '\n';
     }
 
     public void savePet() {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
         String dataHoraFormatada = now.format(formatter);
-        System.out.println(nome);
-        System.out.println(this);
-        String nomeCompletoPet = this.nome.toUpperCase() + sobrenome.toUpperCase();
+        String nomeCompletoPet = this.nome.toUpperCase() + this.sobrenome.toUpperCase();
+
+
+        File diretorioPets = new File("petsCadastrados");
+
+        try {
+
+            if (!diretorioPets.exists()) {
+                diretorioPets.mkdirs();
+                System.out.println("Diretório criado: " + diretorioPets.getAbsolutePath());
+            } else {
+                System.out.println("Diretório já existe: " + diretorioPets.getAbsolutePath());
+            }
+        } catch (SecurityException e) {
+
+            System.err.println("Erro de segurança ao criar o diretório: " + e.getMessage());
+            throw new RuntimeException("Não foi possível criar o diretório para salvar o pet. Verifique as permissões.", e);
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao criar o diretório: " + e.getMessage());
+            throw new RuntimeException("Erro inesperado ao criar o diretório para salvar o pet.", e);
+        }
+
+
         String nomeArquivo = dataHoraFormatada + "-" + nomeCompletoPet + ".TXT";
-        File filePet = new File(nomeArquivo);
+
+        File filePet = new File(diretorioPets, nomeArquivo);
+
         try (FileWriter fw = new FileWriter(filePet);
              BufferedWriter bw = new BufferedWriter(fw)) {
-            filePet.createNewFile();
-            bw.write(String.valueOf(this));
+
+            bw.write(this.toString());
+            System.out.println("Pet salvo com sucesso em: " + filePet.getAbsolutePath());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Erro ao salvar o arquivo do pet: " + e.getMessage());
+            throw new RuntimeException("Não foi possível salvar as informações do pet.", e);
         }
 
     }

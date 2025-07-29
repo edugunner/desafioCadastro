@@ -16,6 +16,7 @@ public class CadastrarPet {
         System.out.println(pet.getSobrenome());
 
 
+
         fileRepository.readLineSpecific(2);
         System.out.println("Digite \"1\" se for Cachorro e \"2\" se for Gato");
         pet.setTypePet(validator.lerUmDois());

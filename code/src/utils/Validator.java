@@ -24,8 +24,8 @@ public class Validator {
         nome = nome.trim();
         regex = "[a-zA-Z ]+";
         if (!nome.matches(regex)) {
-            System.out.println("O Nome não deve conter Números ou Carácteres Especiais, Tente Novamente");
-
+            System.out.println("O nome ou sobrenome não deve conter números ou carácteres especiais, tente novamente");
+            nome = sc.nextLine();
         } else {
             return nome;
         }
