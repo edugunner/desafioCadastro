@@ -1,7 +1,6 @@
 import model.Pet;
 import repository.FileRepository;
-import service.Answers;
-import utils.CadastrarPet;
+import service.CadastrarPet;
 import utils.Validator;
 
 import java.io.IOException;

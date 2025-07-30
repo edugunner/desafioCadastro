@@ -1,7 +1,8 @@
-package utils;
+package service;
 
 import model.Pet;
 import repository.FileRepository;
+import utils.Validator;
 
 public class CadastrarPet {
     Validator validator = new Validator();
