@@ -1,5 +1,6 @@
 import model.Pet;
 import repository.FileRepository;
+import service.BuscarPet;
 import service.CadastrarPet;
 import utils.Validator;
 
@@ -9,12 +10,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
-        Answers answers = new Answers();
-        Validator validator = new Validator();
         Pet pet = new Pet();
         CadastrarPet cadastrarPet = new CadastrarPet();
         FileRepository fileRepository = new FileRepository();
         fileRepository.createFile();
+        BuscarPet buscarPet = new BuscarPet();
         while (true) {
             System.out.println("1. Cadastrar um novo pet\n" +
                     "2. Alterar os dados do pet cadastrado\n" +
@@ -27,7 +27,11 @@ public class Main {
             switch (opcao) {
                 case 1:
                     cadastrarPet.cadastrarPet();
-            }
+                case 2:
+                    buscarPet.buscarPet();
+
+                }
+
 
 
         }

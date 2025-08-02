@@ -136,9 +136,6 @@ public class Pet {
 
             if (!diretorioPets.exists()) {
                 diretorioPets.mkdirs();
-                System.out.println("Diretório criado: " + diretorioPets.getAbsolutePath());
-            } else {
-                System.out.println("Diretório já existe: " + diretorioPets.getAbsolutePath());
             }
         } catch (SecurityException e) {
 
