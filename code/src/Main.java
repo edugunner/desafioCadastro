@@ -28,7 +28,7 @@ public class Main {
                 case 1:
                     cadastrarPet.cadastrarPet();
                 case 2:
-                    buscarPet.buscarPet();
+                    buscarPet.listarPets();
 
                 }
 

@@ -17,7 +17,7 @@ public class BuscarPet {
     static Path path = Paths.get("petsCadastrados");
     File pasta = new File(path.toFile().getAbsolutePath());
 
-    public ArrayList<Pet> buscarPet() {
+    public ArrayList<Pet> listarPets() {
 
         if (!pasta.exists() || !pasta.isDirectory()) {
             System.err.println("O caminho fornecido não é uma pasta válida.");
@@ -35,20 +35,19 @@ public class BuscarPet {
             if (arquivo.isFile() && arquivo.getName().toLowerCase().endsWith(".txt")) {
                 try (FileReader fr = new FileReader(arquivo);
                      BufferedReader br = new BufferedReader(fr)) {
-                    String nome = br.readLine().trim();
+                    String nome = br.readLine().substring(2).trim();
 
-                    String tipo = br.readLine().replaceAll("[^a-zA-ZáàâãéèêíïóôõúüçÁÀÂÃÉÈÊÍÏÓÔÕÚÜÇ]", "");
+                    String tipo = br.readLine().substring(2).trim();
 
-                    String genero = br.readLine().replaceAll("[^a-zA-ZáàâãéèêíïóôõúüçÁÀÂÃÉÈÊÍÏÓÔÕÚÜÇ]", "");
-                    System.out.println(genero);
+                    String genero = br.readLine().substring(2).trim();
 
-                    String endereco = br.readLine();
+                    String endereco = br.readLine().substring(6).trim();
 
-                    String idade = br.readLine();
+                    String idade = br.readLine().substring(2).trim();
 
-                    String peso = br.readLine();
+                    String peso = br.readLine().substring(2).trim();
 
-                    String raca = br.readLine();
+                    String raca = br.readLine().substring(2).trim();
 
                     Pet pet = new Pet();
                     PetAddress petAddress = new PetAddress();
@@ -68,6 +67,10 @@ public class BuscarPet {
                     pet.setRaca(raca);
 
                     petsCadastrados.add(pet);
+//                    for (int i = 0; i < petsCadastrados.size(); i++) {
+//                        System.out.println(petsCadastrados.get(i));
+//                    }
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -78,6 +81,7 @@ public class BuscarPet {
         for (int i = 0; i < petsCadastrados.size(); i++) {
             System.out.println(petsCadastrados.get(i));
         }
+
         return petsCadastrados;
     }
 }
