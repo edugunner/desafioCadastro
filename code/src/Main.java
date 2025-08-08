@@ -2,7 +2,6 @@ import model.Pet;
 import repository.FileRepository;
 import service.BuscarPet;
 import service.CadastrarPet;
-import utils.Validator;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -27,11 +26,18 @@ public class Main {
             switch (opcao) {
                 case 1:
                     cadastrarPet.cadastrarPet();
+                    break;
                 case 2:
+
+                case 3:
+
+                case 4:
                     buscarPet.listarPets();
-
-                }
-
+                    break;
+                case 5:
+                    buscarPet.menuCriterio();
+                    break;
+            }
 
 
         }
