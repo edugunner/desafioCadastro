@@ -54,6 +54,8 @@ public class Validator {
 
 
     public PetAddress validaAddress() {
+        System.out.println("Por favor, insira o endereço do pet.");
+
         String numHouse;
         while (true) {
             System.out.println("Número da casa:");
@@ -61,9 +63,10 @@ public class Validator {
             if (numHouse.matches("\\d+")) {
                 break;
             } else {
-                System.out.println("Digite apenas números. Tente novamente.");
+                System.out.println("Entrada inválida. Por favor, digite apenas números.");
             }
         }
+
 
         System.out.println("Cidade:");
         String city = sc.nextLine();
@@ -71,10 +74,11 @@ public class Validator {
         System.out.println("Rua:");
         String street = sc.nextLine();
 
+        PetAddress petAddress = new PetAddress();
         petAddress.setNumHouse(numHouse);
         petAddress.setCity(city);
         petAddress.setStreet(street);
-        pet.setPetAddress(petAddress); // Certifique-se de que o objeto 'pet' esteja acessível
+
         return petAddress;
     }
 

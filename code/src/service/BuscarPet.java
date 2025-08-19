@@ -24,48 +24,38 @@ public class BuscarPet {
     Validator validator = new Validator();
 
     public ArrayList<Pet> buscarPets() {
-
         if (!pasta.exists() || !pasta.isDirectory()) {
             System.err.println("O caminho fornecido não é uma pasta válida.");
+            return new ArrayList<>();
         }
 
         ArrayList<Pet> petsCadastrados = new ArrayList<>();
-
         File[] arquivos = pasta.listFiles();
 
-        if (arquivos == null) {
+        if (arquivos == null || arquivos.length == 0) {
             System.out.println("A pasta está vazia.");
+            return new ArrayList<>();
         }
 
         for (File arquivo : arquivos) {
             if (arquivo.isFile() && arquivo.getName().toLowerCase().endsWith(".txt")) {
                 try (FileReader fr = new FileReader(arquivo); BufferedReader br = new BufferedReader(fr)) {
-
                     String nome = br.readLine().substring(2).trim();
                     String[] nomeCompleto = nome.split(" ");
-
-
                     String tipo = br.readLine().substring(2).trim();
-
                     String genero = br.readLine().substring(2).trim();
-
                     String endereco = br.readLine().substring(6).trim();
-
                     String idade = br.readLine().substring(2).trim();
-
                     String peso = br.readLine().substring(2).trim();
-
                     String raca = br.readLine().substring(2).trim();
 
                     Pet pet = new Pet();
                     PetAddress petAddress = new PetAddress();
-
                     String[] enderecoCompleto = endereco.split(",");
                     petAddress.setStreet(enderecoCompleto[0].trim());
                     petAddress.setNumHouse(enderecoCompleto[1].trim());
                     petAddress.setCity(enderecoCompleto[2].trim());
                     pet.setPetAddress(petAddress);
-
 
                     pet.setNome(nomeCompleto[0]);
                     pet.setSobrenome(nomeCompleto[1]);
@@ -76,72 +66,91 @@ public class BuscarPet {
                     pet.setRaca(raca);
 
                     petsCadastrados.add(pet);
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }
+        return petsCadastrados;
+    }
 
+    public ArrayList<Pet> iniciarBusca() {
+
+        ArrayList<Pet> resultados = buscarPets();
+
+        if (resultados.isEmpty()) {
+            System.out.println("Não há pets cadastrados para realizar a busca.");
+            return resultados;
         }
 
-        return petsCadastrados;
+
+        System.out.println("\n--- Passo 1: Escolha o Tipo de Animal ---");
+        System.out.println("Digite 1 para GATO ou 2 para CACHORRO");
+        int opcaoTipo = validator.lerUmDois();
+        resultados = filtrarPorTipo(resultados, opcaoTipo);
+
+
+        while (true) {
+            if (resultados.isEmpty()) {
+                System.out.println("A busca atual não retornou resultados. Não é possível adicionar mais filtros.");
+                break;
+            }
+
+            System.out.println("\nDeseja adicionar mais algum critério de busca? Digite 1 para SIM e 2 para NÃO");
+            int escolhaCriterio = validator.lerUmDois();
+
+            if (escolhaCriterio == 2) {
+                break;
+            }
+
+            imprimeMenuCriterios();
+            int opcao = -1;
+            try {
+                opcao = sc.nextInt();
+                sc.nextLine();
+            } catch (InputMismatchException e) {
+                System.err.println("Opção inválida. Digite apenas números.");
+                sc.nextLine();
+                continue;
+            }
+
+            ArrayList<Pet> novosResultados = new ArrayList<>();
+            switch (opcao) {
+                case 1:
+                    novosResultados = filtrarPorNome(resultados);
+                    break;
+                case 2:
+                    novosResultados = filtrarPorSexo(resultados);
+                    break;
+                case 3:
+                    novosResultados = filtrarPorIdade(resultados);
+                    break;
+                case 4:
+                    novosResultados = filtrarPorPeso(resultados);
+                    break;
+                case 5:
+                    novosResultados = filtrarPorRaca(resultados);
+                    break;
+                case 6:
+                    novosResultados = filtrarPorEndereco(resultados);
+                    break;
+                case 7:
+                    System.out.println("Saindo do menu de busca de critérios adicionais...");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+                    continue;
+            }
+            resultados = novosResultados;
+        }
+        imprimeResultados(resultados);
+        return resultados;
     }
 
     public void listarPets() {
         ArrayList<Pet> petsCadastrados = buscarPets();
         for (int i = 0; i < petsCadastrados.size(); i++) {
             System.out.println(petsCadastrados.get(i));
-        }
-    }
-
-    public void menuCriterio() {
-        while (true) {
-            System.out.println("### Menu de Busca de Pets ###");
-            System.out.println("1. Buscar por Nome ou Sobrenome");
-            System.out.println("2. Buscar por Sexo");
-            System.out.println("3. Buscar por Tipo");
-            System.out.println("4. Buscar por Idade");
-            System.out.println("5. Buscar por Peso");
-            System.out.println("6. Buscar por Raça");
-            System.out.println("7. Buscar por Endereço");
-            System.out.println("8. Sair");
-            System.out.print("Escolha o critério de busca: ");
-
-            try {
-                int opcao = sc.nextInt();
-                sc.nextLine();
-                switch (opcao) {
-                    case 1:
-
-                        listaPorNome();
-                        break;
-                    case 2:
-                        listaPorSexo();
-                        break;
-                    case 3:
-                        listaPorTipo();
-                        break;
-                    case 4:
-                        listaPorIdade();
-                        break;
-                    case 5:
-                        listaPorPeso();
-                        break;
-                    case 6:
-                        listaPorRaca();
-                        break;
-                    case 7:
-                        listaPorEndereco();
-                        break;
-                    case 8:
-                        System.out.println("Saindo..");
-                        return;
-                }
-            } catch (InputMismatchException e) {
-                System.err.println("Opção inválida. Digite apenas números");
-                sc.nextLine();
-            }
         }
     }
 
@@ -156,113 +165,108 @@ public class BuscarPet {
         }
     }
 
-    public void listaPorNome() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-        System.out.print("Deseja buscar por qual nome?");
-        String nomeCriterio = sc.nextLine();
-        for (Pet pet : petsCadastrados) {
-            if (formatador(pet.getNome()).toLowerCase().contains(formatador(nomeCriterio).toLowerCase())) {
-                resultados.add(pet);
-            }
-        }
-        imprimeResultados(resultados);
+    private void imprimeMenuCriterios() {
+        System.out.println("### Menu de Busca de Pets ###");
+        System.out.println("1. Buscar por Nome ou Sobrenome");
+        System.out.println("2. Buscar por Sexo");
+        System.out.println("3. Buscar por Idade");
+        System.out.println("4. Buscar por Peso");
+        System.out.println("5. Buscar por Raça");
+        System.out.println("6. Buscar por Endereço");
+        System.out.println("7. Sair");
+        System.out.print("Escolha o critério de busca: ");
     }
 
-    public void listaPorSexo() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
 
+    private ArrayList<Pet> filtrarPorTipo(ArrayList<Pet> lista, int opcao) {
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        PetType tipo = (opcao == 1) ? PetType.GATO : PetType.CACHORRO;
+        for (Pet pet : lista) {
+            if (pet.getType() == tipo) {
+                filtrados.add(pet);
+            }
+        }
+        return filtrados;
+    }
+
+    private ArrayList<Pet> filtrarPorNome(ArrayList<Pet> lista) {
+        System.out.print("Deseja buscar por qual nome? ");
+        String nomeCriterio = sc.nextLine();
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        String nomeFormatado = formatador(nomeCriterio).toLowerCase();
+        for (Pet pet : lista) {
+            if (formatador(pet.getNome()).toLowerCase().contains(nomeFormatado)) {
+                filtrados.add(pet);
+            }
+        }
+        return filtrados;
+    }
+
+    private ArrayList<Pet> filtrarPorSexo(ArrayList<Pet> lista) {
         System.out.println("Digite 1 para buscar por MACHO e 2 para buscar por FEMEA");
         int opcao = validator.lerUmDois();
-
-        for (Pet pet : petsCadastrados) {
-            if (opcao == 1) {
-                if (pet.getGender() == PetGender.MACHO) {
-                    resultados.add(pet);
-                }
-            }
-            if (opcao == 2) {
-                if (pet.getGender() == PetGender.FEMEA) {
-                    resultados.add(pet);
-                }
+        PetGender genero = (opcao == 1) ? PetGender.MACHO : PetGender.FEMEA;
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        for (Pet pet : lista) {
+            if (pet.getGender() == genero) {
+                filtrados.add(pet);
             }
         }
-        imprimeResultados(resultados);
+        return filtrados;
     }
 
-    public void listaPorTipo() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-
-        System.out.println("Digite 1 para buscar por GATO e 2 para buscar por CACHORRO");
-        int opcao = validator.lerUmDois();
-
-        for (Pet pet : petsCadastrados) {
-            if (opcao == 1) {
-                if (pet.getType() == PetType.GATO) {
-                    resultados.add(pet);
-                }
-            }
-            if (opcao == 2) {
-                if (pet.getType() == PetType.CACHORRO) {
-                    resultados.add(pet);
-                }
-            }
-        }
-        imprimeResultados(resultados);
-    }
-
-    public void listaPorIdade() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-        System.out.print("Deseja buscar por qual idade?");
+    private ArrayList<Pet> filtrarPorIdade(ArrayList<Pet> lista) {
+        System.out.print("Deseja buscar por qual idade? ");
         String criterio = sc.nextLine();
-        for (Pet pet : petsCadastrados) {
-            if (formatador(pet.getIdade()).toLowerCase().contains(formatador(criterio).toLowerCase())) {
-                resultados.add(pet);
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        String criterioFormatado = formatador(criterio).toLowerCase();
+        for (Pet pet : lista) {
+            if (formatador(pet.getIdade()).toLowerCase().contains(criterioFormatado)) {
+                filtrados.add(pet);
             }
         }
-        imprimeResultados(resultados);
+        return filtrados;
     }
 
-    public void listaPorPeso() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-        System.out.print("Deseja buscar por qual peso?");
+    private ArrayList<Pet> filtrarPorPeso(ArrayList<Pet> lista) {
+        System.out.print("Deseja buscar por qual peso? ");
         String criterio = sc.nextLine();
-        for (Pet pet : petsCadastrados) {
-            if (formatador(pet.getPeso()).toLowerCase().contains(formatador(criterio).toLowerCase())) {
-                resultados.add(pet);
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        String criterioFormatado = formatador(criterio).toLowerCase();
+        for (Pet pet : lista) {
+            if (formatador(pet.getPeso()).toLowerCase().contains(criterioFormatado)) {
+                filtrados.add(pet);
             }
         }
-        imprimeResultados(resultados);
+        return filtrados;
     }
 
-    public void listaPorRaca() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-        System.out.print("Deseja buscar por qual raca?");
+    private ArrayList<Pet> filtrarPorRaca(ArrayList<Pet> lista) {
+        System.out.print("Deseja buscar por qual raca? ");
         String nomeCriterio = sc.nextLine();
-        for (Pet pet : petsCadastrados) {
-            if (formatador(pet.getRaca()).toLowerCase().contains(formatador(nomeCriterio).toLowerCase())) {
-                resultados.add(pet);
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        String nomeFormatado = formatador(nomeCriterio).toLowerCase();
+        for (Pet pet : lista) {
+            if (formatador(pet.getRaca()).toLowerCase().contains(nomeFormatado)) {
+                filtrados.add(pet);
             }
         }
-        imprimeResultados(resultados);
+        return filtrados;
     }
 
-    public void listaPorEndereco() {
-        ArrayList<Pet> petsCadastrados = buscarPets();
-        ArrayList<Pet> resultados = new ArrayList<>();
-        System.out.print("Deseja buscar por qual endereço?");
+    private ArrayList<Pet> filtrarPorEndereco(ArrayList<Pet> lista) {
+        System.out.print("Deseja buscar por qual endereço? ");
         String criterio = sc.nextLine();
-        for (Pet pet : petsCadastrados) {
-            if (formatador(String.valueOf(pet.getPetAddress())).toLowerCase().contains(formatador(criterio).toLowerCase())) {
-                resultados.add(pet);
+        ArrayList<Pet> filtrados = new ArrayList<>();
+        String criterioFormatado = formatador(criterio).toLowerCase();
+        for (Pet pet : lista) {
+
+            String enderecoCompleto = pet.getPetAddress().getStreet() + " " + pet.getPetAddress().getNumHouse() + " " + pet.getPetAddress().getCity();
+            if (formatador(enderecoCompleto).toLowerCase().contains(criterioFormatado)) {
+                filtrados.add(pet);
             }
         }
-        imprimeResultados(resultados);
+        return filtrados;
     }
 
 
@@ -270,5 +274,3 @@ public class BuscarPet {
         return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 }
-
-

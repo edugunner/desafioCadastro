@@ -1,5 +1,6 @@
 import model.Pet;
 import repository.FileRepository;
+import service.AtualizarPet;
 import service.BuscarPet;
 import service.CadastrarPet;
 
@@ -14,6 +15,7 @@ public class Main {
         FileRepository fileRepository = new FileRepository();
         fileRepository.createFile();
         BuscarPet buscarPet = new BuscarPet();
+        AtualizarPet atualizarPet = new AtualizarPet();
         while (true) {
             System.out.println("1. Cadastrar um novo pet\n" +
                     "2. Alterar os dados do pet cadastrado\n" +
@@ -28,14 +30,14 @@ public class Main {
                     cadastrarPet.cadastrarPet();
                     break;
                 case 2:
-
+                    atualizarPet.alterarPet();
                 case 3:
 
                 case 4:
                     buscarPet.listarPets();
                     break;
                 case 5:
-                    buscarPet.menuCriterio();
+                    buscarPet.iniciarBusca();
                     break;
             }
 
