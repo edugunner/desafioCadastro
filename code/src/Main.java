@@ -3,6 +3,7 @@ import repository.FileRepository;
 import service.AtualizarPet;
 import service.BuscarPet;
 import service.CadastrarPet;
+import service.DeletarPet;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -16,6 +17,7 @@ public class Main {
         fileRepository.createFile();
         BuscarPet buscarPet = new BuscarPet();
         AtualizarPet atualizarPet = new AtualizarPet();
+        DeletarPet deletarPet = new DeletarPet();
         while (true) {
             System.out.println("1. Cadastrar um novo pet\n" +
                     "2. Alterar os dados do pet cadastrado\n" +
@@ -31,8 +33,10 @@ public class Main {
                     break;
                 case 2:
                     atualizarPet.alterarPet();
+                    break;
                 case 3:
-
+                    deletarPet.deletarPet();
+                    break;
                 case 4:
                     buscarPet.listarPets();
                     break;

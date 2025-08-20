@@ -12,14 +12,14 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AtualizarPet {
-    // Variáveis estáticas para acesso global na classe
+
     final Pet pet = new Pet();
     final Scanner sc = new Scanner(System.in);
     final File pasta = new File("petsCadastrados");
     final Validator validator = new Validator();
     final BuscarPet buscarPet = new BuscarPet();
 
-    // Construtor removido, pois as variáveis estáticas são inicializadas diretamente.
+
 
     public void alterarPet() {
         ArrayList<Pet> resultados = new ArrayList<>();
@@ -71,7 +71,6 @@ public class AtualizarPet {
 
                 petParaAlterar.setPetAddress(validator.validaAddress());
 
-//                File arquivoAntigo = new File(pasta,);
                 for (File arquivo : arquivos) {
                     if (arquivo.isFile() && arquivo.getName().endsWith(".txt")) {
                         if (arquivo.getName().contains(nomeArquivoOriginal)) {
@@ -87,24 +86,6 @@ public class AtualizarPet {
         }
     }
 
-    private void salvarPet(Pet pet) {
-        String nomeArquivo = pet.getNome() + pet.getSobrenome() + "_" + pet.getType().toString() + "_" + pet.getGender().toString() + ".txt";
-        File arquivo = new File(pasta, nomeArquivo);
-
-        try (PrintWriter pw = new PrintWriter(new FileWriter(arquivo))) {
-            pw.println("N: " + pet.getNome() + " " + pet.getSobrenome());
-            pw.println("T: " + pet.getType().toString().toLowerCase());
-            pw.println("G: " + pet.getGender().toString().toLowerCase());
-            pw.println("E: " + pet.getPetAddress().getStreet() + ", " + pet.getPetAddress().getNumHouse() + ", " + pet.getPetAddress().getCity());
-            pw.println("I: " + pet.getIdade());
-            pw.println("P: " + pet.getPeso());
-            pw.println("R: " + pet.getRaca());
-            System.out.println("Pet salvo com sucesso no arquivo: " + nomeArquivo);
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar o pet no arquivo: " + nomeArquivo);
-            e.printStackTrace();
-        }
-    }
 
     public static void imprimeResultados(ArrayList<Pet> resultados) {
         if (resultados.isEmpty()) {
